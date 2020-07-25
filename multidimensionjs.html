@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript">
+		studentdata=[["Rollno","StudentName","CollegeName","Marks","Sem"],
+		[1,"virat","iit","100",8],
+		[2,"Rohit","iit","100",6],
+		[3,"shikar","JNU","90",6],
+		[4,"rahul","iit","80",4],
+		[5,"Dhoni","iisc","70",4],
+		[6,"hardik","iim","50",8]]
+
+
+
+
+
+		document.write("<table border='1px'>")
+		for(i=0;i<studentdata.length;i++)
+		{
+		document.write("<tr>");
+			for(j=0;j<studentdata[i].length;j++)
+			{
+				console.log(i+" "+j);
+				document.write("<td>"+studentdata[i][j]+"</td>");
+			}
+
+			document.write("</tr>");
+		}
+
+	document.write("</table>");
+	</script>
+</head>
+<body>
+
+</body>
+</html>

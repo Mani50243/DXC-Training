@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript">
+	function tst(e) {
+			if(!((e.which>=65 && e.which<=90) ||(e.which>=97 && e.which<=122))){
+				e.preventDefault();
+			}
+
+		}
+		function test(e) {
+			if(!(e.which>=97 && e.which<=122)) {
+				e.preventDefault();
+			}
+			}
+  </script>
+</head>
+<body>
+<input type="text" id="txt" onkeypress="test(event)">
+<input type="text" id="txt" onkeypress="tst(event)">
+</body>
+</html>
