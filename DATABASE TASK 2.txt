@@ -1,0 +1,29 @@
+create table timetable
+(
+day varchar(20),
+session_data varchar(20),
+room_no varchar(20),
+faculty_name varchar(20),
+sem varchar(20),
+subject varchar(20),
+constraint pk_tt primary key(day, session_data, room_no),
+constraint uq_tt unique (day, session_data, faculty_name),
+constraint uq_tt1 unique (day, session_data, sem)
+ )
+
+day   sess   room   faculty    sem   subject
+mon   1       r1            raj           1         java
+mon   1      r2             ram         1          jee  // invalid stud busy
+
+mon   1      r2             ram         3         JAVA   valid
+mon   1      r1             john         5        DBMS   invalid
+mon   2      r1             john         5        DBMS   valid
+tue     1      r1             john         5        DBMS   valid
+
+insert into timetable values('mon','1','r1','raj','1','java');
+
+insert into timetable values('mon','1','r2','ram','1','jee');
+
+insert into timetable values('mon','1','r1','ram','3','jee');
+
+insert into timetable values('mon','1','r2','raj','3','jee');

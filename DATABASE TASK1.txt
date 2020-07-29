@@ -1,0 +1,83 @@
+ 1.create table stock(storeid int primary key,productType varchar(20),quantity int);
+INSERTING TABLES:  
+                insert into stock values('1','bananas','400');
+                insert into stock values('2','apple','300');
+                 insert into stock values('3','grape','500');
+                 insert into stock values('4','orange','300');
+                 insert into stock values('5','mango','600');
+2. create table sales(soldDate DATE,store int references stock(storeid),quantity int);
+INSERTING VALUES:
+                 insert into sales values('3-MAR-19','1','20');
+                 insert into sales values('5-JUN-19','1','100');
+                 insert into sales values('7-DEC-19','3','60');
+                  insert into sales values('12-FEB-20','5','100');
+                  insert into sales values('15-JUN-20','2','90');
+
+ select *from stock;
+
+   STOREID PRODUCTTYPE            QUANTITY
+---------- -------------------- ----------
+         1 banana                      400
+         2 apple                       300
+         3 grape                       500
+         4 orange                      300
+         5 mango                       600
+
+
+
+
+select *from sales;
+
+SOLDDATE       STORE   QUANTITY
+--------- ---------- ----------
+03-MAR-19          1         20
+05-JUN-19          1        100
+07-DEC-19          3         60
+12-FEB-20          5        100
+15-JUN-20          2         90
+
+
+
+select current_date from dual;
+
+CURRENT_D
+---------
+28-JUL-20
+
+select current_timestamp from dual;
+
+CURRENT_TIMESTAMP
+---------------------------------------------------------------------------
+28-JUL-20 03.07.06.764000 PM +05:30
+
+
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY HH24:MI:SS';
+
+Session altered.
+
+select current_date from dual;
+
+CURRENT_DATE
+-------------------
+28/07/2020 15:19:48
+
+ SELECT TO_CHAR(DATE '2020-07-28','DAY') FROM DUAL;
+
+TO_CHAR(D
+---------
+TUESDAY
+
+
+SELECT SYSDATE + INTERVAL '10' DAY FROM DUAL;
+
+SYSDATE+INTERVAL'10
+-------------------
+07/08/2020 15:23:28
+
+
+
+
+
+
+
+
