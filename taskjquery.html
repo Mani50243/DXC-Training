@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(function(){$('#su').click(function(){ $('p').hide()})
+	});
+		$(function(){ $('#su2').click(function(){ $('p.abc').hide()})});
+		$(function(){ $('#su3').click(function(){ $('div').fadeToggle()})});
+		$(function(){
+			$('#su4').click(function(){$('#tab').show()})
+		})
+	</script>
+</head>
+<body>
+	<table id="tab">
+	<p>name manideep</p>
+	<p>i am manideep</p>
+	<p class="abc">dada</p>
+	<div class="abc">kala</div>
+	<div>papa</div>
+</table>
+	<input type="submit" value="submit" id="su">
+	<input type="submit" value="submit2" id="su2">
+	<input type="submit" value="submit3" id="su3">
+	<input type="submit" value="showall" id="su4">
+</body>
+</html>
