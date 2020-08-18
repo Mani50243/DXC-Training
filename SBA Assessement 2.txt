@@ -1,0 +1,228 @@
+Question 1:write a java function to break the given string when a space is encountered
+Question 2:write a java function to break the given string when a space is encountered and reverse each word
+Question 4:create a custom exception of type UNCHECKED to validate marks entered by user. valid marks are 0-100 anything beyond should throw the exception created by you
+
+Solution for Q1&Q2&Q4:
+
+class CoustomException extends RuntimeException{
+	public CoustomException() {
+		super("enter valid numberof marks");
+	}
+	
+}
+public class SBA2Q1 {
+	String ReverseString(String data)
+	{
+		char[] a=data.toCharArray();
+		char[] b=new char[a.length];
+		int j=0;
+		for(int i=a.length-1;i>=0;i--)
+		{
+			b[j]=a[i];
+			j++;
+		}
+		String st=new String(b);
+		return st;
+	}
+	void BreakSpace(String data){
+		String[] a=data.split(" ");
+		for(int i=0;i<a.length;i++) {
+			System.out.println(a[i]);
+		}
+		
+	}
+	void ReverseBreakSpace(String data) {
+		String[] a=data.split(" ");
+		for(int i=0;i<a.length;i++) {
+			System.out.println(ReverseString(a[i]));
+		}
+		
+		
+	}
+	void Validatemarks(int marks)throws CoustomException {
+		if(marks<0 || marks>100){
+			throw new CoustomException();
+		}
+		else {
+			System.out.println(marks+" marks got to student");
+		}
+		
+	}
+	public static void main(String[] args) {
+		SBA2Q1 s=new SBA2Q1();
+		s.BreakSpace("This is java programming");
+		s.ReverseBreakSpace("This is Java Programming");
+		try {
+			s.Validatemarks(101);
+		}
+		catch(Exception e) {
+			System.out.println(e);
+		}
+	}
+	
+	
+
+}
+
+
+
+*************************************************************************************************************************
+
+Question 3:create a showroom class that has cars in it ..
+       -> implement a functionality to search the  cars in a given showroom based on the showroom name
+           -> allow the user to sort the car based on its  a)manufacture year
+b)name of the car
+
+ -> create a function to print the car details based on the showroom name and sortType(year/name)
+
+
+Solution:
+
+
+package javamanideep;
+
+public class Car{
+	String CarName;
+	int ManufactureYear;
+	String Price;
+	public String getCarName() {
+		return CarName;
+	}
+	public void setCarName(String carName) {
+		CarName = carName;
+	}
+	public int getManufactureYear() {
+		return ManufactureYear;
+	}
+	public void setManufactureYear(int manufactureYear) {
+		ManufactureYear = manufactureYear;
+	}
+	public String getPrice() {
+		return Price;
+	}
+	public void setPrice(String price) {
+		Price = price;
+	}
+	public Car(String carName, int manufactureYear, String price) {
+		super();
+		CarName = carName;
+		ManufactureYear = manufactureYear;
+		Price = price;
+	}
+	@Override
+	public String toString() {
+		return "Car [CarName=" + CarName + ", ManufactureYear=" + ManufactureYear + ", Price=" + Price + "]";
+	}
+	public void cardisp() {
+		System.out.println("carName "+CarName+"manudate "+ManufactureYear+"price "+Price);
+		
+	}
+public Car(){}
+
+}
+
+
+*************************************************************************************************************************************************
+package javamanideep;
+import java.util.List;
+
+public class Showroom{
+	String ShowroomName;
+	List<Car> cars;
+	public String getShowroomName() {
+		return ShowroomName;
+	}
+	public void setShowroomName(String showroomName) {
+		ShowroomName = showroomName;
+	}
+	public Showroom(String showroomName, List<Car> cars) {
+		super();
+		ShowroomName = showroomName;
+		this.cars = cars;
+	}
+	public List<Car> getCars() {
+		return cars;
+	}
+	@Override
+	public String toString() {
+		return "Showroom [ShowroomName=" + ShowroomName + ", cars=" + cars + "]";
+	}
+	public void setCars(List<Car> cars) {
+		this.cars = cars;
+	}
+	
+}
+*************************************************************************************************************************************************
+package javamanideep;
+
+import java.util.Comparator;
+
+public class ManufactureYearSort extends Car implements Comparator<Car> {
+	public int compare(Car c1,Car c2) {
+		return c1.ManufactureYear-c2.ManufactureYear;
+	}
+
+}
+
+*************************************************************************************************************************************************
+package javamanideep;
+import java.util.Comparator;
+
+public class CarNameSort extends Car implements Comparator<Car>{
+	
+	public int compare(Car c1,Car c2) {
+		return  c1.CarName.compareTo(c2.CarName) ;  
+		
+	}
+}
+*************************************************************************************************************************************************
+package javamanideep;
+import java.util.*;
+
+public class MainCars {
+	Map<String,List<Car>>carstore;
+	public void displayCarsByShowroomname(String Showroomname)
+	{
+	List<Car> cars=carstore.get(Showroomname);
+	for(Car car:cars){
+	System.out.println(car);
+	}
+	}
+
+public static void main(String[] args) {
+	Car c1=new Car("karuthi",2009,"400000");
+	Car c2=new Car("ponda",2004,"800000");
+	Car c3=new Car("Aahindra",2003,"900000");
+	List<Car> cars=new ArrayList<Car>();
+	cars.add(c1);
+	cars.add(c2);
+	cars.add(c3);
+	Showroom sh=new Showroom("ARUn showroom",cars);
+	Collections.sort(cars, new CarNameSort());
+for(Car c:cars) {
+		System.out.println(c);
+	}
+	Car c4=new Car("Maruthi Suzuki",2020,"500000");
+	Car c5=new Car("Honda",2009,"900000");
+	Car c6=new Car("Mahindra Tech",2018,"1900000");
+	List<Car> cars1=new ArrayList<Car>();
+	cars1.add(c4);
+	cars1.add(c5);
+	cars1.add(c6);
+	Showroom sh1=new Showroom("madhura showroom",cars1);
+	Collections.sort(cars1, new ManufactureYearSort());
+	for(Car c:cars1) {
+		System.out.println(c);
+	}
+	MainCars m=new MainCars();
+	m.carstore=new HashMap<String,List<Car>>();
+	  m.carstore.put(sh.getShowroomName(), sh.getCars());
+	  m.carstore.put(sh1.getShowroomName(),sh1.getCars());
+	  m.displayCarsByShowroomname("madhura showroom");	
+	
+}
+}
+
+
+
+
