@@ -1,0 +1,556 @@
+package com.stud.dbutil;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+public class Dbconnection {
+	public static Connection getConnect() {
+	try {
+		Class.forName("oracle.jdbc.OracleDriver");
+		Connection con=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","dxcfs","pass");
+		return con;
+	}
+	catch(Exception e){
+		e.printStackTrace();
+	}
+	return null;
+	}
+
+}
+********************************************************************************************************************************************
+
+package com.stud.model;
+
+public class Student {
+	private int Stud_id;
+	private String SName;
+	private String sem;
+	public int getStud_id() {
+		return Stud_id;
+	}
+	public void setStud_id(int stud_id) {
+		Stud_id = stud_id;
+	}
+	public String getSName() {
+		return SName;
+	}
+	public void setSName(String sName) {
+		SName = sName;
+	}
+	public String getSem() {
+		return sem;
+	}
+	public void setSem(String sem) {
+		this.sem = sem;
+	}
+	public Student(int stud_id, String sName, String sem) {
+		super();
+		Stud_id = stud_id;
+		SName = sName;
+		this.sem = sem;
+	}
+	@Override
+	public String toString() {
+		return "Student [Stud_id=" + Stud_id + ", SName=" + SName + ", sem=" + sem + "]";
+	}
+	public Student() {
+		
+	}
+
+}
+*****************************************************************************************************************************
+
+package com.stud.model;
+
+import java.util.Date;
+
+public class Attendence {
+	String Sname;
+	int Stud_id;
+	String Sem;
+	Date S_date;
+	String Attendence;
+	public String getSname() {
+		return Sname;
+	}
+	public void setSname(String sname) {
+		Sname = sname;
+	}
+	public int getStud_id() {
+		return Stud_id;
+	}
+	public void setStud_id(int stud_id) {
+		Stud_id = stud_id;
+	}
+	public String getSem() {
+		return Sem;
+	}
+	public void setSem(String sem) {
+		Sem = sem;
+	}
+	public Date getS_date() {
+		return S_date;
+	}
+	public void setS_date(Date s_date) {
+		S_date = s_date;
+	}
+	public String getAttendence() {
+		return Attendence;
+	}
+	public void setAttendence(String attendence) {
+		Attendence = attendence;
+	}
+	public Attendence(String sname, int stud_id, String sem, Date s_date, String attendence) {
+		super();
+		Sname = sname;
+		Stud_id = stud_id;
+		Sem = sem;
+		S_date = s_date;
+		Attendence = attendence;
+	}
+	@Override
+	public String toString() {
+		return "Attendence [Sname=" + Sname + ", Stud_id=" + Stud_id + ", Sem=" + Sem + ", S_date=" + S_date
+				+ ", Attendence=" + Attendence + "]";
+	}
+	
+	
+}
+**********************************************************************************************************************************
+
+package com.stud.StudentDao;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+
+import com.stud.dbutil.Dbconnection;
+import com.stud.model.Attendence;
+import com.stud.model.Student;
+
+public class StudentDao {
+	public ArrayList<Student>selectStudents(String data){
+		try {
+			Connection con=Dbconnection.getConnect();
+			String sql="select *from student where sem=?";
+			PreparedStatement stat=con.prepareStatement(sql);
+			stat.setString(1,data);
+			ResultSet rs=stat.executeQuery();
+			ArrayList<Student>StudentList=new ArrayList<>();
+			while(rs.next()){
+				int sid=rs.getInt(1);
+				String sname=rs.getString(2);
+				String sem=rs.getString(3);
+				Student s=new Student(sid,sname,sem);
+				StudentList.add(s);
+			    }
+			return StudentList;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public ArrayList<Attendence> showAttendence(String sem,Date sdate) {
+		try {
+		Connection con=Dbconnection.getConnect();
+		String sql="select *from attendence where sem=? and s_date=?";
+		PreparedStatement stat=con.prepareStatement(sql);
+		stat.setString(1,sem);
+		stat.setDate(2,new java.sql.Date(sdate.getTime()));
+		ResultSet rs=stat.executeQuery();
+		ArrayList<Attendence> SList=new ArrayList<>();
+		while(rs.next()){
+			String sname=rs.getString(1);
+			int sid=rs.getInt(2);
+			String ssem=rs.getString(3);
+			Date d=rs.getDate(4);
+			String at=rs.getString(5);
+			Attendence s=new Attendence(sname,sid,ssem,d,at);
+			SList.add(s);
+		    }
+		return SList;
+	}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	
+}
+}
+
+**********************************************************************************************************************************
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body bgcolor='red'>
+<center>
+<form action="studAttendence">
+<select name="sem">
+<option name="sem">sem1</option>
+<option name="sem">sem2</option>
+<option name="sem">sem3</option>
+<option name="sem">sem4</option>
+<option name="sem">sem5</option>
+<option name="sem">sem6</option>
+</select><br>
+<input type="submit" value="MarkAttendence">
+</form>
+</center>
+
+</body>
+</html>
+***************************************************************************************************************************************
+
+
+
+package com.student.serv;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.catalina.servlet4preview.RequestDispatcher;
+
+import com.stud.StudentDao.StudentDao;
+import com.stud.model.Student;
+
+/**
+ * Servlet implementation class studAttendence
+ */
+@WebServlet("/studAttendence")
+public class studAttendence extends HttpServlet {
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String sem=request.getParameter("sem");
+		StudentDao dao=new StudentDao();
+		ArrayList<Student>StudentList=dao.selectStudents(sem);
+		HttpSession session=request.getSession();
+		session.setAttribute("slist",StudentList);
+		PrintWriter out=response.getWriter();
+		out.print(sem);
+		out.print(StudentList);
+		javax.servlet.RequestDispatcher rd=request.getRequestDispatcher("displayStudent.jsp");
+		rd.forward(request,response);
+	}
+
+	
+}
+*************************************************************************************************************************************************
+DISPLAYSTUDENT.JSP:
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt"%>
+    <%@page import="com.stud.model.Student"%>
+    <%@page import="java.util.ArrayList"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="savedata">
+<table>
+<tr><td>sid</td><td>sname</td><td>Attendence</td></tr>
+<c:forEach items="${slist}" var="Student">
+<tr>
+<td><c:out value="${Student.getStud_id()}"/></td>
+<td><c:out value="${Student.getSName()}"/></td>
+<td><input type="checkbox" name="attendence" value="${Student.getStud_id()} ${Student.getSName()} ${Student.getSem()}"></td>
+</tr>
+</c:forEach>
+</table>
+<input type="submit" value="save">
+</form>
+
+</body>
+</html>
+*************************************************************************************************************************************
+
+package com.student.serv;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.Date;
+import com.stud.dbutil.Dbconnection;
+import com.stud.model.Student;
+
+/**
+ * Servlet implementation class savedata
+ */
+@WebServlet("/savedata")
+public class savedata extends HttpServlet {
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+			PrintWriter out=response.getWriter();
+			response.setContentType("text/html");
+			String names[]=request.getParameterValues("attendence");
+			HttpSession session=request.getSession();
+			session.setAttribute("upatt",names);
+			try {
+				ArrayList<Student>slist=(ArrayList<Student>)session.getAttribute("slist");
+				int c=slist.size();
+				int result=0;
+				Connection con=Dbconnection.getConnect();
+				String sql="insert into attendence values(?,?,?,?,?)";
+				PreparedStatement stat=con.prepareStatement(sql);
+				for(int j=0;j<c;j++){
+					Student s=slist.get(j);
+					Date d1=new Date();
+					stat.setString(1,s.getSName());
+					stat.setInt(2,s.getStud_id());
+					stat.setString(3,s.getSem());
+					stat.setDate(4,new java.sql.Date(d1.getTime()));
+					stat.setString(5,"A");
+					result=stat.executeUpdate();
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}			
+			javax.servlet.RequestDispatcher rd=request.getRequestDispatcher("savedata1");
+			rd.forward(request,response);
+			
+			
+		
+	}
+
+	
+}
+**************************************************************************************************************************************************
+
+package com.student.serv;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.stud.dbutil.Dbconnection;
+
+/**
+ * Servlet implementation class savedata1
+ */
+@WebServlet("/savedata1")
+public class savedata1 extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter out=response.getWriter();
+		response.setContentType("text/html");
+		HttpSession session=request.getSession();
+		String names1[]=(String[])session.getAttribute("upatt");
+		try {
+			Connection con1=Dbconnection.getConnect();
+			String sql1="update attendence set attendence=? where studid=?";
+			PreparedStatement stat1=con1.prepareStatement(sql1);
+			for(int i=0;i<names1.length;i++) {
+				String[] a=names1[i].split(" ");
+				stat1.setString(1,"P");
+				stat1.setInt(2,Integer.parseInt(a[0]));
+				int result1=stat1.executeUpdate();
+			}
+			out.print(names1.length);
+				
+					
+		}
+		catch(Exception e) {
+				e.printStackTrace();
+			}
+		
+		
+		out.print("<h1>Attendence is added suscessfully</h1>");
+		out.print("<form action='StudentAttendence.html'>");
+		out.print("<input type='submit' value='Go to Main menu'>");
+		out.print(" </form>");
+
+		
+	}
+
+	
+
+}
+******************************************************************************************************************************************
+
+DISPLAY STUDENTS:
+
+ShowAttend.jsp:
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>jQuery Datepicker: Disable Future Dates</title>
+<link rel="stylesheet"
+	href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+<script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
+<script type="text/javascript">
+	$(function() {
+		var date = new Date();
+		var currentMonth = date.getMonth();
+		var currentDate = date.getDate();
+		var currentYear = date.getFullYear();
+		$('#datepicker').datepicker({
+			maxDate : new Date(currentYear, currentMonth, currentDate)
+		});
+	});
+</script>
+
+</head>
+<body>
+<form action="ShowAt">
+		Select Semester : <select name="sem">
+			<option name="sem">Sem 1</option>
+			<option name="sem">Sem 2</option>
+			<option name="sem">Sem 3</option>
+			<option name="sem">Sem 4</option>
+			<option name="sem">Sem 5</option>
+			<option name="sem">Sem 6</option>
+		</select>
+
+		<p>
+			Date: <input type="text" id="datepicker" name="date" />
+		</p>
+		<input type="submit" value="Mark attendance">
+
+
+	</form>
+
+
+</body>
+</html>
+****************************************************************************************************************************************
+package com.student.serv;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.stud.StudentDao.StudentDao;
+import com.stud.model.Attendence;
+
+/**
+ * Servlet implementation class ShowAt
+ */
+@WebServlet("/ShowAt")
+public class ShowAt extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public ShowAt() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter out=response.getWriter();
+		String data=request.getParameter("sem");
+		String ddate=request.getParameter("date");
+		SimpleDateFormat sd=new SimpleDateFormat("MM-dd-yyyy");
+		java.util.Date dob=null;
+			try {
+				dob=sd.parse(ddate);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			
+			StudentDao dao=new StudentDao();
+			ArrayList<Attendence> sattend=dao.showAttendence(data,dob);
+			HttpSession s=request.getSession();
+			s.setAttribute("sattend",sattend);
+			javax.servlet.RequestDispatcher rd=request.getRequestDispatcher("studentAttendence.jsp");
+		rd.forward(request,response);
+}
+}
+********************************************************************************************************************
+showAttendence.jsp:
+
+<%@page import="java.util.Date"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt"%>
+    
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<form>
+<table>
+<tr><td>Sname</td><td>StudId</td><td>Sem</td><td>S_Date</td><td>Status</td></tr>
+<c:forEach items="${sattend}" var="Attendence">
+<tr>
+<td><c:out value="${Attendence.getSName()}"/></td>
+<td><c:out value="${Attendence.getStud_id()}"/></td>
+<td><c:out value="${Attendence.getSem()}"/></td>
+<td><c:out value="${Attendence.getS_date()}"/></td>
+<td><c:out value="${Attendence.getAttendence()}"/></td>
+<td></td>
+</tr>
+</c:forEach>
+</table>
+<input type="submit" value="save">
+</form>
+</body>
+</html>
+
+
+
+
+
