@@ -1,0 +1,183 @@
+package Taskfor;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class Employ {
+	@Id
+	String empid;
+	String efname;
+	String elname;
+	int age;
+	public int getAge() {
+		return age;
+	}
+	public Employ(String empid, String efname, String elname, int age) {
+		super();
+		this.empid = empid;
+		this.efname = efname;
+		this.elname = elname;
+		this.age = age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	public String getEmpid() {
+		return empid;
+	}
+	public void setEmpid(String empid) {
+		this.empid = empid;
+	}
+	public String getEfname() {
+		return efname;
+	}
+	public void setEfname(String efname) {
+		this.efname = efname;
+	}
+	public String getElname() {
+		return elname;
+	}
+	public void setElname(String elname) {
+		this.elname = elname;
+	}
+	@Override
+	public String toString() {
+		return "Employ [empid=" + empid + ", efname=" + efname + ", elname=" + elname + ", age=" + age + "]";
+	}
+	public Employ() {
+		
+	}
+}
+*************************************************************************************************************
+
+
+package Taskfor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Query;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Order;
+
+import com.myapp.model.Book;
+
+public class EmployDao {
+	SessionFactory factory=null;
+	public String generateEmpid(String fname,String lname)
+	{
+		 String data1;
+		try
+		{
+		factory=new Configuration().configure().buildSessionFactory();
+		Session session= factory.openSession();
+		Transaction tx=session.beginTransaction();
+		Query query=session.createSQLQuery("select employ_1.nextval from dual");
+		int data=Integer.parseInt(query.getSingleResult().toString());
+		tx.commit();
+		if( data< 100 && data >=10)
+			data1="0"+data;
+		else if(data<10)
+			data1="00"+data;
+		else
+			data1=""+data;
+		String empid=fname.substring(0,2)+lname.substring(0,2)+data1;
+		return empid;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	
+	}
+public String SaveEmploy(Employ emp) {
+		
+		try {
+			factory=new Configuration().configure().buildSessionFactory();
+			Session session= factory.openSession();
+			Transaction tx=session.beginTransaction();
+			session.save(emp);
+			tx.commit();
+			return "emp saved";
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		return "emp cannot be saved";
+	}
+
+public ArrayList<Employ> ThreeEmpOrder() {
+	try {
+		factory=new Configuration().configure().buildSessionFactory();
+		Session session= factory.openSession();
+		Transaction tx=session.beginTransaction();
+		Criteria ct=session.createCriteria(Employ.class);
+		ct.addOrder(Order.desc("age"));
+	ArrayList<Employ>emp=(ArrayList<Employ>)ct.setMaxResults(3).list();
+	tx.commit();
+	return emp;
+}
+	catch(Exception e) {
+		e.printStackTrace();
+	}
+	finally {
+		factory.close();
+		}
+	
+	return null;
+}
+
+
+
+
+public ArrayList<Employ> ThreeEmp() {
+	try {
+		factory=new Configuration().configure().buildSessionFactory();
+		Session session= factory.openSession();
+		Transaction tx=session.beginTransaction();
+		Criteria ct=session.createCriteria(Employ.class);
+	ArrayList<Employ>emp=(ArrayList<Employ>)ct.setMaxResults(3).list();
+	tx.commit();
+	return emp;
+}
+	catch(Exception e) {
+		e.printStackTrace();
+	}
+	finally {
+		factory.close();
+		}
+	
+	return null;
+}
+
+	
+}
+*********************************************************************************************************************************
+
+
+package Taskfor;
+
+import java.util.ArrayList;
+
+public class Empservice {
+	public static void main(String[] args) {
+		/*Employ e=new Employ("","MS","Dhoni",39);
+		
+		EmployDao d=new EmployDao();
+		String a=d.generateEmpid(e.getEfname(),e.getElname());
+		e.setEmpid(a);
+		System.out.println(d.SaveEmploy(e));*/
+		EmployDao d=new EmployDao();
+		ArrayList<Employ>em=(ArrayList<Employ>)d.ThreeEmpOrder();
+		for(Employ e:em) {
+			System.out.println(e);
+		}
+	}
+
+}

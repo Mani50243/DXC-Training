@@ -1,0 +1,289 @@
+package com.product.model;
+
+public class Product {
+	int productid;
+	String productname;                   
+	int productprice; 
+	String Manufactureplace; 
+	String companyName; 
+	String Tax ;
+	public int getProductid() {
+		return productid;
+	}
+	public void setProductid(int productid) {
+		this.productid = productid;
+	}
+	public Product(int productid, String productname, int productprice, String manufactureplace, String companyName,
+			String tax) {
+		super();
+		this.productid = productid;
+		this.productname = productname;
+		this.productprice = productprice;
+		Manufactureplace = manufactureplace;
+		this.companyName = companyName;
+		Tax = tax;
+	}
+	@Override
+	public String toString() {
+		return "Product [productid=" + productid + ", productname=" + productname + ", productprice=" + productprice
+				+ ", Manufactureplace=" + Manufactureplace + ", companyName=" + companyName + ", Tax=" + Tax + "]";
+	}
+	public String getProductname() {
+		return productname;
+	}
+	public void setProductname(String productname) {
+		this.productname = productname;
+	}
+	public int getProductprice() {
+		return productprice;
+	}
+	public void setProductprice(int productprice) {
+		this.productprice = productprice;
+	}
+	public String getManufactureplace() {
+		return Manufactureplace;
+	}
+	public void setManufactureplace(String manufactureplace) {
+		Manufactureplace = manufactureplace;
+	}
+	public String getCompanyName() {
+		return companyName;
+	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	public String getTax() {
+		return Tax;
+	}
+	public void setTax(String tax) {
+		Tax = tax;
+	}
+	public Product() {
+		
+	}
+
+}
+**************************************************************************************************************************
+
+
+package com.product.dbutil;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+public class DBConnection {
+	
+		public static Connection getConnect(){
+		try {
+			Class.forName("oracle.jdbc.OracleDriver");
+			Connection con=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","dxcfs","pass");
+			return con;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} 
+		}
+	
+
+}
+**************************************************************************************************************************************
+
+
+package com.product.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import com.product.dbutil.DBConnection;
+import com.product.model.Product;
+
+
+public class Dao {
+	public String CreateProduct(Product product) {
+		try {
+			Connection connection=DBConnection.getConnect();
+			String sql="insert into product values(?,?,?,?,?,?)";
+			PreparedStatement stat=connection.prepareStatement(sql);
+			stat.setInt(1,product.getProductid());
+			stat.setString(2,product.getProductname());
+			stat.setInt(3,product.getProductprice());
+			stat.setString(4,product.getManufactureplace());
+			stat.setString(5,product.getCompanyName());
+			stat.setString(6,product.getTax());
+			int res= stat.executeUpdate();
+			if(res>0) {
+			return "Product Created";
+			}
+			else {
+			return "Product connot be Created";
+			}
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "Exception "+e;
+		}
+		
+	}
+	public String deleteProductbyid(int id) {
+		
+		try {
+			Connection connection=DBConnection.getConnect();
+			String s="delete product where productid=?";
+			PreparedStatement stat=connection.prepareStatement(s);
+			stat.setInt(1,id);
+			int res=stat.executeUpdate();
+			System.out.println(res);
+			if(res>0) {
+				return "Product deleted";
+				}
+				else {
+				return "Product connot be deleted";
+				}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "Exception "+e;
+		}
+		
+	}
+	public ArrayList<Product> showAllProducts(){
+		Connection connection=DBConnection.getConnect();
+		String sql="select *from product";
+		
+		try {
+			
+			PreparedStatement stat=connection.prepareStatement(sql);
+			ArrayList<Product>productlist=new ArrayList<>();
+			ResultSet res=stat.executeQuery();
+			if(res.next()) {
+				do {
+					int productid=res.getInt(1);
+					String productname=res.getString(2);                   
+					int productprice=res.getInt(3); 
+					String Manufactureplace=res.getString(4); 
+					String companyName=res.getString(5); 
+					String Tax=res.getString(6) ;
+					
+               Product p=new Product(productid,productname,productprice,Manufactureplace,companyName,Tax);
+               productlist.add(p);
+				}while(res.next());
+				
+			}
+			return productlist;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+		
+		
+		
+		
+	}
+	public Product getProductbyid(int id) {
+		Connection connection=DBConnection.getConnect();
+		String sql="select *from product where productid=?";
+		
+		try {
+			
+			PreparedStatement stat=connection.prepareStatement(sql);
+			stat.setInt(1, id);
+			ResultSet res=stat.executeQuery();
+			if(res.next()) {
+			
+					int productid=res.getInt(1);
+					String productname=res.getString(2);                   
+					int productprice=res.getInt(3); 
+					String Manufactureplace=res.getString(4); 
+					String companyName=res.getString(5); 
+					String Tax=res.getString(6) ;
+					
+               Product p=new Product(productid,productname,productprice,Manufactureplace,companyName,Tax);
+               return p;
+			}
+						
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+	public int updateProduct(int pid,Product product) {
+		
+		
+				try {
+					Connection connection=DBConnection.getConnect();
+					Product existingproduct=getProductbyid(pid);
+String sql="update product set productname=?,productprice=?,manufactureplace=?,companyname=?,tax=? where productid=?";
+			PreparedStatement stat=connection.prepareStatement(sql);
+			if(product.getProductname()!=null) {
+				existingproduct.setProductname(product.getProductname());
+			}
+			if(product.getProductprice()!=0) {
+				existingproduct.setProductprice(product.getProductprice());
+			}
+			if(product.getManufactureplace()!=null) {
+				existingproduct.setManufactureplace(product.getManufactureplace());
+			}
+			if(product.getCompanyName()!=null) {
+				existingproduct.setCompanyName(product.getCompanyName());
+			}
+			if(product.getTax()!=null) {
+				existingproduct.setTax(product.getTax());
+			}
+			stat.setString(1,existingproduct.getProductname());
+			stat.setInt(2,existingproduct.getProductprice());
+			stat.setString(3,existingproduct.getManufactureplace());
+			stat.setString(4,existingproduct.getCompanyName());
+			stat.setString(5,existingproduct.getTax());
+			stat.setInt(6,pid);
+			int res=stat.executeUpdate();
+			if(res>0) {
+				return res;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
+		
+	}
+
+}
+****************************************************************************************************************************************
+
+
+package com.product.service;
+
+import java.util.ArrayList;
+
+import com.product.dao.Dao;
+import com.product.model.Product;
+
+public class ProductService {
+	public static void main(String[] args) {
+		Product p=new Product(101,"mobile",19000,"japan","sony","4%");
+		Dao d=new Dao();
+		Product p1=new Product();
+		p1.setCompanyName("hawuai");;
+		int res=d.updateProduct(101,p1);
+		//System.out.println(d.CreateProduct(p));
+	   ArrayList<Product>productlist=d.showAllProducts();
+		for(Product pt:productlist) {
+			System.out.println(pt);
+		}
+		
+		//System.out.println(d.getProductbyid(103));
+		//System.out.println(d.deleteProductbyid(102));
+			}
+
+}
