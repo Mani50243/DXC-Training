@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="Srv1">
+Empid:<input type="text" name="Empid">
+EName:<input type="text" name="EName">
+EAge:<input type="text" name="EAge">
+EAddress:<input type="text" name="EAddress">
+<input type="submit">
+</form>
+</body>
+</html>
+******************************************************************************************************************
+package com.myrv.demo;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+/**
+ * Servlet implementation class Srv1
+ */
+@WebServlet("/Srv1")
+public class Srv1 extends HttpServlet {
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter out=response.getWriter();
+		response.setContentType("text/html");
+		int Empid=Integer.parseInt(request.getParameter("Empid"));
+		String EName=request.getParameter("EName");
+		int EAge=Integer.parseInt(request.getParameter("EAge"));
+		String EAddress=request.getParameter("EAddress");
+		Employee employee=new Employee(Empid,EName,EAge,EAddress);
+		HttpSession session=request.getSession();
+		session.setAttribute("employee",employee);
+		
+		out.print("<form action='Srv2'>");
+		out.print(" <input type='submit'>");
+		out.print(" </form>");
+
+
+		}
+}
+**********************************************************************************************************************
+package com.myrv.demo;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+/**
+ * Servlet implementation class Srv2
+ */
+@WebServlet("/Srv2")
+public class Srv2 extends HttpServlet {
+protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+	PrintWriter out=response.getWriter();
+	response.setContentType("text/html");
+
+	HttpSession session=request.getSession();
+	Employee employee=(Employee)session.getAttribute("employee");
+	out.print(employee);
+	out.print("<form action='Srv3'>");
+	out.print(" <input type='submit'>");
+	out.print(" </form>");
+	
+	}
+
+	
+
+}
+****************************************************************************************************************************
+package com.myrv.demo;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+/**
+ * Servlet implementation class Srv3
+ */
+@WebServlet("/Srv3")
+public class Srv3 extends HttpServlet {
+		protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+			PrintWriter out=response.getWriter();
+			response.setContentType("text/html");
+			HttpSession session=request.getSession();
+			Employee employee=(Employee)session.getAttribute("employee");
+			out.print(employee.getEName());
+		
+		}
+
+	
+
+}
+********************************************************************************************************
+package com.myrv.demo;
+
+public class Employee {
+	private int Empid;
+	private String EName;
+	private int EAge;
+	private String EAddress;
+	public int getEmpid() {
+		return Empid;
+	}
+	public void setEmpid(int empid) {
+		Empid = empid;
+	}
+	public String getEName() {
+		return EName;
+	}
+	public void setEName(String eName) {
+		EName = eName;
+	}
+	public int getEAge() {
+		return EAge;
+	}
+	public void setEAge(int eAge) {
+		EAge = eAge;
+	}
+	public String getEAddress() {
+		return EAddress;
+	}
+	public void setEAddress(String eAddress) {
+		EAddress = eAddress;
+	}
+	public Employee(int empid, String eName, int eAge, String eAddress) {
+		super();
+		Empid = empid;
+		EName = eName;
+		EAge = eAge;
+		EAddress = eAddress;
+	}
+	@Override
+	public String toString() {
+		return "Employee [Empid=" + Empid + ", EName=" + EName + ", EAge=" + EAge + ", EAddress=" + EAddress + "]";
+	}
+	
+
+}
