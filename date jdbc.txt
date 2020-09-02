@@ -1,0 +1,106 @@
+package com.date.model;
+
+import java.util.Date;
+
+public class Client {
+private String cname;
+private Date date;
+public String getCname() {
+	return cname;
+}
+public void setCname(String cname) {
+	this.cname = cname;
+}
+public Date getDate() {
+	return date;
+}
+public void setDate(Date date) {
+	this.date = date;
+}
+public Client(String cname, Date date) {
+	super();
+	this.cname = cname;
+	this.date = date;
+}
+@Override
+public String toString() {
+	return "Client [cname=" + cname + ", date=" + date + "]";
+}
+public Client() {
+	
+}
+
+}
+*********************************************************************************************************************************
+
+package com.date.model.Dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+import com.date.model.Client;
+import com.product.dbutil.DBConnection;
+
+public class Clientdao {
+	public String saveclient(Client client) {
+		try {
+			Connection con=DBConnection.getConnect();
+			String sql="insert into client values(?,?)";
+			PreparedStatement stat=con.prepareStatement(sql);
+			stat.setString(1,client.getCname());
+			java.util.Date dob=client.getDate();
+			java.sql.Date sqdl=new java.sql.Date(dob.getTime());
+			stat.setDate(2, sqdl);
+			int res=stat.executeUpdate();
+			if(res>0) {
+				return "client saved";
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "unable to create client";
+	}
+
+}
+*************************************************************************************************************************************
+
+
+package com.date.model.service;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.date.model.Client;
+import com.date.model.Dao.Clientdao;
+
+public class ClientService {
+	public static void main(String[] args) {
+		/*Client client=new Client("Jhon",new java.util.Date());
+		Clientdao dao=new Clientdao();
+		String res=dao.saveclient(client);
+		System.out.println(res);*/
+		
+		
+		SimpleDateFormat dateformat=new SimpleDateFormat("dd-MM-yyyy");
+		java.util.Date dob=new Date();
+		try {
+		 dob=dateformat.parse("01-06-2000");
+		 //converts d given string into java util date
+
+		} catch (ParseException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		}
+
+
+		Client client1=new Client("CENA",dob);
+
+		Clientdao dao1=new Clientdao();
+		String res1= dao1.saveclient(client1);
+		System.out.println(res1);
+	}
+
+}
