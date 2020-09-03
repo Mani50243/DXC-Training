@@ -1,0 +1,172 @@
+
+package com.myspr.demo;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Required;
+
+public class Student {
+
+private int rollNo;
+private String name;
+@Qualifier("address1")
+//@Autowired
+private Address address;
+public Address getAddress() {
+	return address;
+}
+public Student(int rollNo, String name, Address address) {
+	super();
+	this.rollNo = rollNo;
+	this.name = name;
+	this.address = address;
+}
+/*@Qualifier("address1")
+@Autowired
+@Required*/
+public void setAddress(Address address) {
+	this.address = address;
+}
+public int getRollNo() {
+return rollNo;
+}
+public void setRollNo(int rollNo) {
+this.rollNo = rollNo;
+}
+public String getName() {
+return name;
+}
+public void setName(String name) {
+this.name = name;
+}
+public Student(int rollNo, String name) {
+super();
+this.rollNo = rollNo;
+this.name = name;
+System.out.println("int rollNo, String name");
+System.out.println("c1");
+
+}
+public Student(String name,int rollNo) {
+super();
+this.rollNo = rollNo;
+this.name = name;
+System.out.println("String name,int rollNo,");
+
+}
+@Override
+public String toString() {
+	return "Student [rollNo=" + rollNo + ", name=" + name + ", address=" + address + "]";
+}
+
+public Student() {
+// TODO Auto-generated constructor stub
+}
+
+}
+
+
+
+
+********************************************************************************************************************************************
+
+
+
+
+package com.myspr.demo;
+
+
+public class Address {
+
+String city;
+String state;
+public String getCity() {
+return city;
+}
+public void setCity(String city) {
+this.city = city;
+}
+public String getState() {
+return state;
+}
+public void setState(String state) {
+this.state = state;
+}
+public Address(String city, String state) {
+super();
+this.city = city;
+this.state = state;
+}
+@Override
+public String toString() {
+return "Address [city=" + city + ", state=" + state + "]";
+}
+public Address() {
+// TODO Auto-generated constructor stub
+}
+}
+
+
+****************************************************************************************************************************
+
+
+
+package com.myspr.service;
+
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.xml.XmlBeanFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.FileSystemResource;
+
+import com.myspr.demo.Student;
+
+public class StudentService {
+
+public static void main(String[] args) {
+
+/*Student student=new Student();
+System.out.println(student.getName());
+*/
+
+	BeanFactory factory=new ClassPathXmlApplicationContext("spring.xml");
+	Student student=(Student)factory.getBean("student");
+	System.out.println(student);
+	System.out.println(student.getAddress());
+
+}
+
+}
+
+**********************************************************************************************************************************************
+Spring.xml File:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:context="http://www.springframework.org/schema/context"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+
+<bean id="student" class="com.myspr.demo.Student">
+
+<constructor-arg type="int" index="0" value="20"></constructor-arg>
+<constructor-arg value="1000"></constructor-arg>
+</bean>
+<bean id="address1" class="com.myspr.demo.Address">
+<property name="state" value="telu"></property>
+<property name="city" value="velugu"></property>
+</bean>
+<bean id="address2" class="com.myspr.demo.Address">
+<property name="state" value="telangana"></property>
+<property name="city" value="kodad"></property>
+</bean>
+
+
+
+
+
+<context:annotation-config/>
+</beans>
