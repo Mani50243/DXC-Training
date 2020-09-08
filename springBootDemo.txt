@@ -1,0 +1,108 @@
+package com.myboot.bootok;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class BootOkApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(BootOkApplication.class, args);
+		System.out.println("Service is up ");
+	}
+
+}
+*************************************************************************************************************************
+package com.myboot.bootok;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class MyRestApi {
+	@RequestMapping(value="test")
+	public String hello()
+	{
+	return "Hello World";
+	}
+	@GetMapping(value="student")
+	public Student getStudent()
+	{
+
+	Student student=new Student(10,"DHONI");
+	return student;
+	}
+
+
+	@GetMapping(value="student/{name}")
+	public Student getStudentName(@PathVariable String name)
+	{
+	Student student=new Student(10,name);
+	return student;
+	}
+
+
+	@PostMapping(value="studentdata")
+	public String postStudent(@RequestBody Student student)
+	{
+	System.out.println(student);
+	return "Data accepted";
+	}
+	
+	@DeleteMapping(value="studentdata")
+	public String deleteStudent(@RequestBody String name)
+	{
+	System.out.println(name);
+	return "delete requested";
+	}
+	@PutMapping(value="studentdata")
+	public String putStudent(@RequestBody String name)
+	{
+		System.out.println(name);
+	return "putrequested";
+	}
+
+
+
+}
+*****************************************************************************************************************************************
+
+
+package com.myboot.bootok;
+
+public class Student {
+	
+	int studentId;
+	String studentName;
+	public int getStudentId() {
+	return studentId;
+	}
+	public void setStudentId(int studentId) {
+	this.studentId = studentId;
+	}
+	public String getStudentName() {
+	return studentName;
+	}
+	public void setStudentName(String studentName) {
+	this.studentName = studentName;
+	}
+	public Student(int studentId, String studentName) {
+	super();
+	this.studentId = studentId;
+	this.studentName = studentName;
+	}
+	@Override
+	public String toString() {
+	return "Student [studentId=" + studentId + ", studentName=" + studentName + "]";
+	}
+	public Student() {
+	// TODO Auto-generated constructor stub
+	}
+
+}
